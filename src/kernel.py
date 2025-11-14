@@ -91,7 +91,7 @@ class Kernel:
         del self.tasks[pid].mailbox[index]
         return mes
 
-    def run_task(self, pid):
+    def run_task(self, pid, loop=False):
         if pid not in self.tasks:
             self.logger.error(f"I don't know this PID: {pid}")
             return False
@@ -102,11 +102,11 @@ class Kernel:
             self.tasks[pid].state = RUNNING
             self.logger.debug(f'Running task PID {pid}')
             self.tasks[pid].func(self, pid)
-            self.close_task(pid)
+            self.close_task(pid, this_is_loop=loop)
         except Exception as e:
             self.logger.error(f'Task with PID {pid} crashed: {e}')
 
-    def schedule(self):
+    def schedule(self, loop=False):
         self.ready_queue = [
             pid for pid, task in self.tasks.items()
             if task.state == CLOSED
@@ -117,20 +117,20 @@ class Kernel:
             return
         next_pid = self.ready_queue[0]
         self.logger.debug(f'Scheduled task PID {next_pid} (priority: {self.tasks[next_pid].priority})')
-        self.run_task(next_pid)
+        self.run_task(next_pid, loop=loop)
         
     def run_loop(self, iterations=1):
         for q in range(iterations):
             self.logger.debug(f'Running all tasks... ({q + 1}/{iterations})')
             for i in range(len(self.tasks)):
-                self.schedule()
+                self.schedule(loop=True)
             for j in self.tasks.keys():
                 self.tasks[j].state = CLOSED
         self.logger.debug('All tasks completed.')
 
-    def close_task(self, pid):
+    def close_task(self, pid, this_is_loop=False):
         if pid in self.tasks:
-            self.tasks[pid].state = ALREADY_RAN
+            self.tasks[pid].state = ALREADY_RAN if this_is_loop else CLOSED
             self.logger.debug(f'Task PID {pid} closed.')
         else:
             self.logger.error(f"I don't know this PID: {pid}")
