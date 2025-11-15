@@ -33,7 +33,6 @@ class VFS:
 
     def write(self, path, data):
         self.files[path] = data
-        # Автодобавление директории
         parts = path.strip('/').split('/')
         for i in range(1, len(parts)):
             self.dirs.add('/' + '/'.join(parts[:i]))
