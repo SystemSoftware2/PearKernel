@@ -135,18 +135,6 @@ class Terminal:
 def terminal_task(kernel, pid):
     terminal = kernel.terminal
 
-    time.sleep(1)
-    kernel.logger.debug("Initializing TerminalOS...")
-    time.sleep(0.8)
-    kernel.logger.debug("Loading kernel modules...")
-    time.sleep(0.6)
-    kernel.logger.debug("[VFS]: Mounting virtual filesystem...")
-    time.sleep(0.7)
-    kernel.logger.debug("Terminal ready.")
-    
-    print('---' * 18)
-    time.sleep(0.3)
-
     print('TerminalOS 0.1 — Type "help" for commands.')
     while True:
         try:
