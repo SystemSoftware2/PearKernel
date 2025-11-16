@@ -134,21 +134,18 @@ class Terminal:
 
 def terminal_task(kernel, pid):
     terminal = kernel.terminal
-
     print('TerminalOS 0.1 — Type "help" for commands.')
     while True:
         try:
             cmd = input(terminal.prompt)
             output = terminal.execute(cmd)
-            if output:
-                print(output)
             if cmd.strip().lower() == 'exit':
-                print('\nShutting down...')
-                kernel.close_task(pid)
+                print('Shutting down...')
                 break
+            elif output:
+                print(output)
         except (EOFError, KeyboardInterrupt):
-            print('\nShutting down...')
-            kernel.close_task(pid)
+            print('Shutting down...')
             break
 
 def main():
